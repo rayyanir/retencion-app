@@ -87,13 +87,22 @@ class GenerarHistoricoMetricas extends Command
                             $rotacion = $activos > 0 ? ($salidas / $activos) : 0;
                             $retencion = $salidas > 0 ? (($salidas - $salidas012) / $salidas) : 1;
 
+                            $seccion = 'ZONA';
+                            if (str_contains(strtoupper($tienda->cdc), 'PLANTA')) {
+                                $seccion = 'PLANTA';
+                            } elseif (str_contains(strtoupper($tienda->cdc), 'CAR') || str_contains(strtoupper($tienda->cdc), 'C.A.R')) {
+                                $seccion = 'CAR';
+                            } elseif (str_contains(strtoupper($tienda->cdc), 'OPERACIONES')) {
+                                $seccion = 'OPERACIONES';
+                            }
+
                             // Crear metrica tienda
                             MetricaReportada::updateOrCreate([
                                 'anio' => $year,
                                 'mes' => $month,
                                 'codigo' => $tienda->codigo_corto,
                                 'categoria' => $cat,
-                                'seccion' => 'ZONA', // simplificado
+                                'seccion' => $seccion,
                                 'tipo_registro' => 'tienda'
                             ], [
                                 'nombre' => $tienda->cdc,
